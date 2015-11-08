@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <setjmp.h>
 #define DONE_COUNTING 10
+#define CLOCK_SECONDS 4
 unsigned long long nr = 0;
 sigset_t ms;
 sigjmp_buf environment;
@@ -35,7 +36,7 @@ int main(){
 	sigfillset(&ms);
 	sigdelset(&ms, SIGUSR1);sigdelset(&ms, SIGALRM);
 	sigsuspend(&ms);
-	alarm(4);
+	alarm(CLOCK_SECONDS);
 	if(sigsetjmp(environment, 0) != DONE_COUNTING){
 		while(1){
 			sigsuspend(&ms);
