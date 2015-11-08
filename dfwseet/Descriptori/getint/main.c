@@ -11,11 +11,6 @@ int isIgnored(char c){
 }
 
 int getint(int d){
-	//long poz = lseek(d, 0L, SEEK_CUR);
-	/*if(poz == -1){
-		errno = EAGAIN;
-		return 0;
-	}*/
 	char c;
 	int ans = 0;
 	int readDigit = 0;
@@ -42,8 +37,6 @@ int getint(int d){
 			}
 			else if(c == '-' || c == '+'){
 				if(readDigit != 0){
-					//am citit ceva si am dat de un minus sau plus
-					//totu-i bine, returnam ans
 					errno = 0;
 					lseek(d, -1L, SEEK_CUR);
 					return ans * semn;
@@ -53,7 +46,7 @@ int getint(int d){
 						semn = -1;
 				}
 			}
-			else //if((c >= 'a' && c <= 'z')||(c >= 'A' && c <= 'Z')){
+			else 
 			{
 				if(readDigit != 0){
 					errno = 0;
@@ -61,18 +54,13 @@ int getint(int d){
 					return ans * semn;
 				}
 				else{
-					//dupa ce am ignorat spatiile, am dat de litera
-					//trebuie settat errno la ceva si returnat 0
-					errno = EIO;//e cumva apropiat de asta, dar are sens diferit
+					errno = EINVAL;
 					lseek(d, -1L, SEEK_CUR);
 					return 0;
 				}
 			}
 		}
 	}
-	//am ajuns la sfarsitul fisierului
-	//am citit doar cifre, @param ans e in range, returnam ans
-	//lseek(d, poz, SEEK_SET);
 	return ans * semn;
 }
 
