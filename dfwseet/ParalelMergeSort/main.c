@@ -2,10 +2,12 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <sys/shm.h>
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <sys/shm.h>
+
 
 #define MAXSIZE 500000
 unsigned char *c, B[MAXSIZE];
@@ -53,13 +55,24 @@ void MergeSort(unsigned char *c, int l, int r){
 
 //	printf("Se mergeuieste bucata %d - %d\n", l, r);
 	int i,k,j;
-	for(i = l, j = m+1, k = l; i <= m || j <= r;)
+	/*for(i = l, j = m+1, k = l; i <= m || j <= r;)
 		if(j > r  || i <= m && c[i] < c[j])
 			B[k++] = c[i++];
 		else
 			B[k++] = c[j++];
 	for(i = l; i <= r; ++i)
-		c[i] = B[i];
+		c[i] = B[i];*/
+	for(i = l, j = m+1; i <= m && j <= r;){
+		if(c[i] < c[j])
+			++i;
+		else{
+			int aux = c[j];
+			for(k = j; k > i; --k)
+				c[k] = c[k-1];
+			c[i] = aux;
+			++i; ++j; ++m;
+		}	
+	}
 }
 int readFile(unsigned char *c, int d){
 	int i = 0;
@@ -83,14 +96,14 @@ int main(int argc, char*args[]){
 		perror(args[1]);
 		return -1;
 	}
-
+	struct stat ps;
+	stat(args[1], &ps);
+	
 	key_t key = IPC_PRIVATE;
-	int shmid = shmget(key, MAXSIZE * sizeof(int), IPC_CREAT|0666);
+	int shmid = shmget(key, ps.st_size * sizeof(unsigned char), IPC_CREAT|0666);
 	c = (unsigned char*)shmat(shmid, NULL, 0);
 	readFile(c, d);
-	close(d);
-	
-	c[strlen(c)] = '\0';
+	close(d);	
 	
 	MergeSort(c, 0, strlen(c)-1);
 
