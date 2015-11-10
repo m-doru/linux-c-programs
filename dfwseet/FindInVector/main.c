@@ -8,7 +8,7 @@
 #include <string.h>
 #include <errno.h>
 #define MAXSIZE 500000
-char c[MAXSIZE], B[MAXSIZE];
+
 
 int check(pid_t pidret, int s){
 	if(WIFEXITED(s)) return WEXITSTATUS(s);
@@ -39,27 +39,27 @@ int Find(int *c, int l, int r, int nr){
 	int stare1, stare2;
 	r1 = waitpid(f1, &stare1, 0);
 	r2 = waitpid(f2, &stare2, 0);
-	return check(r1, stare1) || check(r2, stare2);
+	return check(r1, stare1) + check(r2, stare2);
 }
-void readFile(char *c, int d){
-	int i = 0;
-	while(read(d, &c[i++], 1) > 0 && i < MAXSIZE);
-}
+
 int main(int argc, char*args[]){
 	if(argc < 3 ){
 		perror("Utilizare: numar vectorul_de_numere\n");
-		return -1;
+		return 1;
 	}	
 
 	int nr;
-	int *v = (int*)malloc((argc) * sizeof(int));
+	int *v = (int*)malloc((argc-2) * sizeof(int));
 
 	sscanf(args[1], "%d", &nr);
-	for(int i = 2; i < argc; ++i)
+	int i;
+	for(i = 2; i < argc; ++i)
 		sscanf(args[i], "%d", v+i-2);
 
-	if(Find(v, 0, argc-3, nr) == 1)
-		printf("Gasit!\n");
+	int ans = Find(v, 0, argc-3, nr);
+
+	if(ans > 0)
+		printf("Gasit de %d ori!\n", ans);
 	else
 		printf("Negasit!\n");	
 
