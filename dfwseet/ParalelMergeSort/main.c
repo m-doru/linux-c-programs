@@ -29,7 +29,6 @@ void MergeSort(unsigned char *c, int l, int r){
 	
 	if(l >= r)
 		return;
-//	printf("Se proceseaza bucata %d - %d\n", l, r);
 	pid_t f1, f2;
 	int m = (r + l) >> 1;
 	errno = EAGAIN;
@@ -53,15 +52,7 @@ void MergeSort(unsigned char *c, int l, int r){
 	r1 = waitpid(f1, &stare1, 0);
 	r2 = waitpid(f2, &stare2, 0);
 
-//	printf("Se mergeuieste bucata %d - %d\n", l, r);
 	int i,k,j;
-	/*for(i = l, j = m+1, k = l; i <= m || j <= r;)
-		if(j > r  || i <= m && c[i] < c[j])
-			B[k++] = c[i++];
-		else
-			B[k++] = c[j++];
-	for(i = l; i <= r; ++i)
-		c[i] = B[i];*/
 	for(i = l, j = m+1; i <= m && j <= r;){
 		if(c[i] < c[j])
 			++i;
