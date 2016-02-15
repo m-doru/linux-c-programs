@@ -78,7 +78,11 @@ void print(unsigned char *c, int d){
 }
 int main(int argc, char*args[]){
 	if(argc != 3){
-		perror("Utilizare: program nume_fisier_intrare nume_fisier_sortat\n");
+		char s[200];
+		strcpy(s, "How to use ");
+		strcat(s, args[0]);
+		strcat(" input_file_name output_file_name \n");
+		perror(s);
 		return -1;
 	}	
 
